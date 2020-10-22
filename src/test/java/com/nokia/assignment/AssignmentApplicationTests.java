@@ -31,7 +31,7 @@ class AssignmentApplicationTests {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private final String PERSON_URL = "/person/";
+    private static final String PERSON_URL = "/person/";
 
     @Test
     void contextLoads() {
