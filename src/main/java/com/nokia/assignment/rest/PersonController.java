@@ -17,9 +17,6 @@ public class PersonController {
     @RequestMapping(method = RequestMethod.POST, value = "/person")
     @ResponseStatus(HttpStatus.OK)
     public boolean addPerson(@RequestBody Person person) {
-        if (person.getId() == null || person.getName() == null)
-            return false;
-
         return personService.addPerson(person.getId(), person.getName());
     }
 

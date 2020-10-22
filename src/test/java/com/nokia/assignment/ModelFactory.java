@@ -19,24 +19,22 @@ public class ModelFactory {
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
     }
-    public static Person person(){
+
+    public static Person person() {
         return new Person(randomString(), randomString());
     }
 
-    public static Person person(int IdLength){
+    public static Person person(int IdLength) {
         return new Person(randomString(IdLength), randomString());
     }
-    public static Person person(String id){
-        return new Person(id, randomString());
-    }
 
-    public static Person person(String id, String name){
+    public static Person person(String id, String name) {
         return new Person(id, name);
     }
 
-    public static ArrayList<Person> persons(int numberOfPersons){
+    public static ArrayList<Person> persons(int numberOfPersons) {
         ArrayList<Person> persons = new ArrayList<>();
-        for(int i = 1; i <= numberOfPersons; ++i){
+        for (int i = 1; i <= numberOfPersons; ++i) {
             String uniqueString = "person_" + i;
             persons.add(person(uniqueString, uniqueString));
         }

@@ -3,6 +3,7 @@ package com.nokia.assignment;
 import com.nokia.assignment.model.service.Person;
 import com.nokia.assignment.rest.PersonController;
 import com.nokia.assignment.service.PersonService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -216,6 +217,23 @@ class AssignmentApplicationTests {
         // Then
         ArrayList<Person> result = getAllPersons();
         assertEquals(100, result.size());
+    }
+
+    @Disabled
+    @Test
+    public void outOfMemotyTest() {
+        intializeTest();
+
+        // Given
+        ArrayList<com.nokia.assignment.model.view.Person> persons = ModelFactory.persons(500000);
+        // Add all persons
+        for(com.nokia.assignment.model.view.Person person: persons){
+            addPerson(person);
+        }
+
+        // Then
+        ArrayList<Person> result = getAllPersons();
+        assertNotEquals(500000, result.size());
     }
 
     private ArrayList<Person> getAllPersons() {
