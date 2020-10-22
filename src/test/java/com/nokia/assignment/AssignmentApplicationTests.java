@@ -40,21 +40,21 @@ class AssignmentApplicationTests {
 
     @Test
     public void getEmptyPersons() {
-        intializeTest();
+        initializeTest();
         ArrayList<Person> persons = getAllPersons();
         assertEquals(0, persons.size());
     }
 
     @Test
     public void searchForNonExistingPersonInEmptyList() {
-        intializeTest();
+        initializeTest();
         ArrayList<Person> persons = searchPersonByName(ModelFactory.randomString());
         assertEquals(0, persons.size());
     }
 
     @Test
     public void addPersonsWithDifferentIds() {
-        intializeTest();
+        initializeTest();
         // Given
         com.nokia.assignment.model.view.Person person1 = ModelFactory.person(5);
         com.nokia.assignment.model.view.Person person2 = ModelFactory.person(6);
@@ -74,7 +74,7 @@ class AssignmentApplicationTests {
 
     @Test
     public void addPersonsWithSameAndDifferentId() {
-        intializeTest();
+        initializeTest();
         com.nokia.assignment.model.view.Person person = ModelFactory.person();
 
         // Add person
@@ -107,7 +107,7 @@ class AssignmentApplicationTests {
 
     @Test
     public void searchByName() {
-        intializeTest();
+        initializeTest();
         // Given
         com.nokia.assignment.model.view.Person person1 = ModelFactory.person(5);
         com.nokia.assignment.model.view.Person person2 = ModelFactory.person(6);
@@ -134,7 +134,7 @@ class AssignmentApplicationTests {
 
     @Test
     public void deletePerson() {
-        intializeTest();
+        initializeTest();
         // Given
         com.nokia.assignment.model.view.Person person1 = ModelFactory.person(5);
         com.nokia.assignment.model.view.Person person2 = ModelFactory.person(6);
@@ -172,7 +172,7 @@ class AssignmentApplicationTests {
 
     @Test
     public void addPersonsConcurrentRequests() throws InterruptedException {
-        intializeTest();
+        initializeTest();
         // Given
         int numberOfPersonsPerThread = 1000;
         Thread thread1 = new Thread(() -> addPersons(numberOfPersonsPerThread));
@@ -195,7 +195,7 @@ class AssignmentApplicationTests {
 
     @Test
     public void deletePersonsConcurrentRequests() throws InterruptedException {
-        intializeTest();
+        initializeTest();
 
         // Given
         ArrayList<com.nokia.assignment.model.view.Person> persons = ModelFactory.persons(10);
@@ -222,7 +222,7 @@ class AssignmentApplicationTests {
     @Disabled
     @Test
     public void outOfMemotyTest() {
-        intializeTest();
+        initializeTest();
 
         // Given
         ArrayList<com.nokia.assignment.model.view.Person> persons = ModelFactory.persons(500000);
@@ -268,8 +268,8 @@ class AssignmentApplicationTests {
         assertTrue(HttpStatus.OK.equals(httpStatus), "Invalid http status " + httpStatus);
     }
 
-    private void intializeTest() {
-        personService.clearAllPersons();
+    private void initializeTest() {
+        personService.clearAll();
     }
 
     private void addPersons(int number) {

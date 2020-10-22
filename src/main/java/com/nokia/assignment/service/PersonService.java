@@ -5,13 +5,13 @@ import com.nokia.assignment.model.service.Person;
 import java.util.ArrayList;
 
 public interface PersonService {
-    boolean addPerson(String id, String name);
+    boolean add(String id, String name);
 
-    int deletePerson(String name);
+    int deleteByName(String name);
 
-    ArrayList<Person> searchPersonByName(String name);
+    ArrayList<Person> searchByName(String name);
 
-    ArrayList<Person> getAllPersons();
+    ArrayList<Person> getAll();
 
-    void clearAllPersons();
+    void clearAll();
 }

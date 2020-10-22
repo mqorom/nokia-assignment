@@ -16,25 +16,25 @@ public class PersonController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/person")
     @ResponseStatus(HttpStatus.OK)
-    public boolean addPerson(@RequestBody Person person) {
-        return personService.addPerson(person.getId(), person.getName());
+    public boolean add(@RequestBody Person person) {
+        return personService.add(person.getId(), person.getName());
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/person/{name}")
     @ResponseStatus(HttpStatus.OK)
-    public int deletePerson(@PathVariable("name") String name) {
-        return personService.deletePerson(name);
+    public int deleteByName(@PathVariable("name") String name) {
+        return personService.deleteByName(name);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/person/{name}")
     @ResponseStatus(HttpStatus.OK)
-    public ArrayList<com.nokia.assignment.model.service.Person> searchPersonByName(@PathVariable("name") String name) {
-        return personService.searchPersonByName(name);
+    public ArrayList<com.nokia.assignment.model.service.Person> searchByName(@PathVariable("name") String name) {
+        return personService.searchByName(name);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/person")
     @ResponseStatus(HttpStatus.OK)
-    public ArrayList<com.nokia.assignment.model.service.Person> getAllPersons() {
-        return personService.getAllPersons();
+    public ArrayList<com.nokia.assignment.model.service.Person> getAll() {
+        return personService.getAll();
     }
 }

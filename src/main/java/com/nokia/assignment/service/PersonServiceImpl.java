@@ -15,7 +15,7 @@ public class PersonServiceImpl implements PersonService {
     private static ArrayList<Person> persons = new ArrayList<>();
 
     @Override
-    public synchronized boolean addPerson(String id, String name) {
+    public synchronized boolean add(String id, String name) {
         if (isPersonExist(id))
             return false;
 
@@ -26,24 +26,24 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public synchronized int deletePerson(String name) {
+    public synchronized int deleteByName(String name) {
         int originalPersons = persons.size();
         persons.removeIf(person -> person.getName().equals(name));
         return originalPersons - persons.size();
     }
 
     @Override
-    public ArrayList<Person> searchPersonByName(String name) {
+    public ArrayList<Person> searchByName(String name) {
         return (ArrayList<Person>) persons.stream().filter(obj -> obj.getName().equals(name)).collect(Collectors.toList());
     }
 
     @Override
-    public ArrayList<Person> getAllPersons() {
+    public ArrayList<Person> getAll() {
         return persons;
     }
 
     @Override
-    public void clearAllPersons() {
+    public void clearAll() {
         persons.clear();
     }
 
