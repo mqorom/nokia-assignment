@@ -20,7 +20,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AssignmentApplicationTests {
+class SingleThreadTests {
 
     @Autowired
     private PersonController personController;
@@ -32,6 +32,7 @@ class AssignmentApplicationTests {
     private TestRestTemplate restTemplate;
 
     private static final String PERSON_URL = "/person/";
+
 
     @Test
     void contextLoads() {
@@ -170,55 +171,6 @@ class AssignmentApplicationTests {
         assertEquals(person2.getName(), persons.get(0).getName());
     }
 
-    @Test
-    public void addPersonsConcurrentRequests() throws InterruptedException {
-        initializeTest();
-        // Given
-        int numberOfPersonsPerThread = 1000;
-        Thread thread1 = new Thread(() -> addPersons(numberOfPersonsPerThread));
-        Thread thread2 = new Thread(() -> addPersons(numberOfPersonsPerThread));
-        Thread thread3 = new Thread(() -> addPersons(numberOfPersonsPerThread));
-
-        thread1.start();
-        thread2.start();
-        thread3.start();
-
-        // wait until all threads completed
-        thread1.join();
-        thread2.join();
-        thread3.join();
-
-        // Then all persons are added
-        ArrayList<Person> persons = getAllPersons();
-        assertEquals(3000, persons.size());
-    }
-
-    @Test
-    public void deletePersonsConcurrentRequests() throws InterruptedException {
-        initializeTest();
-
-        // Given
-        ArrayList<com.nokia.assignment.model.view.Person> persons = ModelFactory.persons(10);
-        // Add all persons
-        for(com.nokia.assignment.model.view.Person person: persons){
-            addPerson(person);
-        }
-
-        Thread thread1 = new Thread(() -> addPersons(100)); // add more persons
-        Thread thread2 = new Thread(() -> deletePersons(persons)); // delete all 10 persons added initially
-
-        thread1.start();
-        thread2.start();
-
-        // wait until all threads completed
-        thread1.join();
-        thread2.join();
-
-        // Then
-        ArrayList<Person> result = getAllPersons();
-        assertEquals(100, result.size());
-    }
-
     @Disabled
     @Test
     public void outOfMemotyTest() {
@@ -227,7 +179,7 @@ class AssignmentApplicationTests {
         // Given
         ArrayList<com.nokia.assignment.model.view.Person> persons = ModelFactory.persons(500000);
         // Add all persons
-        for(com.nokia.assignment.model.view.Person person: persons){
+        for (com.nokia.assignment.model.view.Person person : persons) {
             addPerson(person);
         }
 
@@ -270,29 +222,5 @@ class AssignmentApplicationTests {
 
     private void initializeTest() {
         personService.clearAll();
-    }
-
-    private void addPersons(int number) {
-        for (int i = 0; i < number; ++i) {
-            String uniqueString = "person_" + i + "_" + Thread.currentThread().getId();
-            com.nokia.assignment.model.view.Person person = ModelFactory.person(uniqueString, uniqueString);
-            addPerson(person);
-            sleep();
-        }
-    }
-
-    private void deletePersons(ArrayList<com.nokia.assignment.model.view.Person> persons) {
-        for (com.nokia.assignment.model.view.Person person: persons) {
-            deletePersons(person.getName());
-            sleep();
-        }
-    }
-
-    private void sleep() {
-        try {
-            Thread.sleep(5);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
