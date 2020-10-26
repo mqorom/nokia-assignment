@@ -171,23 +171,6 @@ class SingleThreadTests {
         assertEquals(person2.getName(), persons.get(0).getName());
     }
 
-    @Disabled
-    @Test
-    public void outOfMemotyTest() {
-        initializeTest();
-
-        // Given
-        ArrayList<com.nokia.assignment.model.view.Person> persons = ModelFactory.persons(500000);
-        // Add all persons
-        for (com.nokia.assignment.model.view.Person person : persons) {
-            addPerson(person);
-        }
-
-        // Then
-        ArrayList<Person> result = getAllPersons();
-        assertNotEquals(500000, result.size());
-    }
-
     private ArrayList<Person> getAllPersons() {
         return getPersons(PERSON_URL);
     }

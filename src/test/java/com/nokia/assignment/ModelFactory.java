@@ -35,9 +35,13 @@ public class ModelFactory {
     public static ArrayList<Person> persons(int numberOfPersons) {
         ArrayList<Person> persons = new ArrayList<>();
         for (int i = 1; i <= numberOfPersons; ++i) {
-            String uniqueString = "person_" + i;
+            String uniqueString = "person_" + i + randomString(10000);
             persons.add(person(uniqueString, uniqueString));
         }
         return persons;
+    }
+
+    public static int sleep(int max){
+        return random.nextInt(max);
     }
 }

@@ -10,10 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,7 +21,7 @@ public class ConcurrentTests {
     @Autowired
     private PersonService personService;
 
-    private ExecutorService executorService = Executors.newScheduledThreadPool(5);
+    private ExecutorService executorService = Executors.newScheduledThreadPool(20);
 
     @Test
     public void addPersons_ConcurrentRequests() throws InterruptedException {
@@ -56,11 +53,6 @@ public class ConcurrentTests {
             String uniqueString = "person_" + i;
             com.nokia.assignment.model.view.Person person = ModelFactory.person(uniqueString, uniqueString);
             tasks.add(new AddPersonTask(person));
-        }
-
-        for (int i = 0; i < 1000; ++i) {
-            String uniqueString = "person_" + i;
-            com.nokia.assignment.model.view.Person person = ModelFactory.person(uniqueString, uniqueString);
             tasks.add(new DeletePersonTask(person));
         }
 
@@ -77,16 +69,7 @@ public class ConcurrentTests {
             String uniqueString = "person_" + i;
             com.nokia.assignment.model.view.Person person = ModelFactory.person(uniqueString, uniqueString);
             tasks.add(new AddPersonTask(person));
-        }
-
-        for (int i = 0; i < 1000; ++i) {
-            String uniqueString = "person_" + i;
-            com.nokia.assignment.model.view.Person person = ModelFactory.person(uniqueString, uniqueString);
             tasks.add(new DeletePersonTask(person));
-        }
-
-        for (int i = 0; i < 1000; ++i) {
-            String uniqueString = "person_" + i;
             tasks.add(new SearchPerson(uniqueString));
         }
         invokeAndCheckFuture(tasks);
@@ -95,26 +78,34 @@ public class ConcurrentTests {
     @Test
     public void deletePersons_ConcurrentRequests() throws InterruptedException {
         initializeTest();
+        Set<Callable<Boolean>> tasks = new HashSet<>();
+
+        // Given
+        for (int i = 0; i < 1000; ++i) { // add 1000 persons & prepare delete tasks
+            String uniqueString = "person_" + i;
+            com.nokia.assignment.model.view.Person person = ModelFactory.person(uniqueString, uniqueString);
+            personService.add(person.getId(), person.getName());
+            tasks.add(new DeletePersonTask(person));
+        }
+
+        // Then
+        invokeAndCheckFuture(tasks);
+        ArrayList<Person> result = personService.getAll();
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void searchPersons_ConcurrentRequests() throws InterruptedException {
+        initializeTest();
+        Set<Callable<Boolean>> tasks = new HashSet<>();
 
         // Given
         for (int i = 0; i < 1000; ++i) { // add 1000 persons
             String uniqueString = "person_" + i;
-            com.nokia.assignment.model.view.Person person = ModelFactory.person(uniqueString, uniqueString);
-            personService.add(person.getId(), person.getName());
+            personService.add(uniqueString, uniqueString);
+            tasks.add(new SearchPerson(uniqueString));
         }
-
-        Set<Callable<Boolean>> tasks = new HashSet<>();
-
-        for (int i = 0; i < 1000; ++i) { // prepare 1000 delete thread request
-            String uniqueString = "person_" + i;
-            com.nokia.assignment.model.view.Person person = ModelFactory.person(uniqueString, uniqueString);
-            tasks.add(new DeletePersonTask(person));
-        }
-
         invokeAndCheckFuture(tasks);
-
-        ArrayList<Person> result = personService.getAll();
-        assertEquals(0, result.size());
     }
 
     private void invokeAndCheckFuture(Set<Callable<Boolean>> tasks) throws InterruptedException {
@@ -140,6 +131,7 @@ public class ConcurrentTests {
 
         @Override
         public Boolean call() throws Exception {
+            TimeUnit.MILLISECONDS.sleep(ModelFactory.sleep(10));
             return personService.add(person.getId(), person.getName());
         }
     }
@@ -153,6 +145,7 @@ public class ConcurrentTests {
 
         @Override
         public Boolean call() throws Exception {
+            TimeUnit.MILLISECONDS.sleep(ModelFactory.sleep(10));
             personService.deleteByName(person.getName());
             return Boolean.TRUE;
         }
@@ -167,6 +160,7 @@ public class ConcurrentTests {
 
         @Override
         public Boolean call() throws Exception {
+            TimeUnit.MILLISECONDS.sleep(ModelFactory.sleep(10));
             personService.searchByName(name);
             return Boolean.TRUE;
         }
