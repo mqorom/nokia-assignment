@@ -27,7 +27,7 @@ public class OutOfMemoryTests {
             System.out.println("i=" + i);
             String uniqueString = "person_" + i++ + ModelFactory.randomString(5000);
             boolean isAdded = personService.add(uniqueString, uniqueString);
-            if (!isAdded) { // OOM when add return true because id is unqiue
+            if (!isAdded) { // When OOM happened the add method returns false because id here is always unqiue
                 System.out.println("out of memory achieved");
                 break;
             }
