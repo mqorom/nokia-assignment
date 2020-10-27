@@ -6,11 +6,11 @@ import javax.validation.constraints.Size;
 public class Person {
 
     @NotNull(message="Id can't be null")
-//    @Size(min = 3, max = 25)
+    @Size(min = 3, max = 25)
     private String id;
 
     @NotNull(message="Name can't be null")
-//    @Size(min = 4, max = 25)
+    @Size(min = 4, max = 25)
     private String name;
 
     public Person(String id, String name) {

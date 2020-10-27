@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class OutOfMemoryTests {
@@ -14,37 +15,39 @@ public class OutOfMemoryTests {
     private PersonService personService;
 
     @Test
-    public void outOfMemory() throws InterruptedException {
+    public void outOfMemory() {
         initializeTest();
-        String personName = "person1";
-
-        personService.add("id1", personName);
-        personService.add("id2", personName);
+        String personName = "person";
+        int staticPersonsNumber = 10000;
+        for (int i = 0; i < staticPersonsNumber; ++i) {
+            personService.add("id_" + i, personName);
+        }
 
         // Given
         int i = 0;
+        System.out.println("Filling the memory by adding huge number of persons, please wait");
         while (true) {
-            System.out.println("i=" + i);
             String uniqueString = "person_" + i++ + ModelFactory.randomString(5000);
             boolean isAdded = personService.add(uniqueString, uniqueString);
-            if (!isAdded) { // When OOM happened the add method returns false because id here is always unqiue
-                System.out.println("out of memory achieved");
+            if (!isAdded) { // When OOM happened the add method returns false because id here is always unique
+                System.out.println("out of memory achieved and handled successfully!");
                 break;
             }
             ModelFactory.sleep(2);
         }
 
-        // Make sure that data is still saved
+        // Make sure that data is still available in memory by calling search method
+        assertEquals(staticPersonsNumber, personService.searchByName(personName).size());
 
-        // two persons with name personName
-        assertEquals(personService.searchByName(personName).size(), 2);
+        // delete staticPersonsNumber of persons
+        assertEquals(staticPersonsNumber, personService.deleteByName(personName));
 
-        // delete 3 persons
-        assertEquals(personService.deleteByName(personName), 2);
+        // Now the memory should be fine after deleting $staticPersonsNumber of persons so we can add more persons again!
+        assertTrue(personService.add("id1", personName));
+        assertTrue(personService.add("id2", personName));
     }
 
     private void initializeTest() {
         personService.clearAll();
     }
-
 }
